@@ -15,6 +15,12 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ControllerAdvisor {
 
+    @ExceptionHandler(TaskNotFoundException.class)
+    private ResponseEntity<ErrorResponse> handleUserNotFoundException(TaskNotFoundException ex) {
+        log.warn(ex.getMessage());
+        return createErrorResponse(HttpStatus.BAD_REQUEST, ex, ex.getMessage());
+    }
+
     @ExceptionHandler(UserNotFoundException.class)
     private ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
         log.warn(ex.getMessage());

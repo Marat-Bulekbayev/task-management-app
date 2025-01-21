@@ -1,6 +1,8 @@
 package org.example.taskmanagementapp.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.example.taskmanagementapp.exception.TaskNotFoundException;
 import org.example.taskmanagementapp.mapper.TaskMapper;
 import org.example.taskmanagementapp.model.dto.TaskDto;
 import org.example.taskmanagementapp.model.entity.Task;
@@ -14,12 +16,13 @@ import org.example.taskmanagementapp.model.response.UpdateTaskResponse;
 import org.example.taskmanagementapp.repository.TaskRepository;
 import org.example.taskmanagementapp.repository.UserRepository;
 import org.example.taskmanagementapp.service.TaskService;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -38,6 +41,7 @@ public class TaskServiceImpl implements TaskService {
         task.setAuthor(user);
         Task savedTask = taskRepository.save(task);
 
+        log.info("Create new task with id: {} by user: {}", savedTask.getId(), user.getEmail());
         return taskMapper.toCreateTaskResponse(savedTask);
     }
 
@@ -53,8 +57,17 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public Optional<Task> findTaskById(Long id) {
-        return taskRepository.findById(id);
+    public TaskDto findTaskById(Long id, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(String.format("Task with id: %d not found", id)));
+            return taskMapper.toTaskDto(task);
+        } else {
+            Task task = taskRepository.findByIdAndAuthorId(id, user.getId())
+                    .orElseThrow(() -> new TaskNotFoundException(String.format("Task with id: %d not found for user %s", id, user.getEmail())));
+            return taskMapper.toTaskDto(task);
+        }
     }
 
     @Transactional
@@ -65,7 +78,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public void deleteTaskById(Long id) {
-        taskRepository.deleteById(id);
+    public void deleteTaskById(Long id, String username) {
+        User user = userRepository.findByEmail(username).orElseThrow();
+
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            log.info("Delete task with id: {} by admin user: {}", id, user.getEmail());
+            taskRepository.deleteById(id);
+        } else {
+            throw new AccessDeniedException("You don't have permission for this action");
+        }
     }
 }
