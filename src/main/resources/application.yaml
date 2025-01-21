@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: task-management-app
+  datasource:
+    url: jdbc:postgresql://localhost:5432/task-management-db
+    username: admin
+    password: admin
+  liquibase:
+    enabled: true
+
+server:
+  port: 8080
