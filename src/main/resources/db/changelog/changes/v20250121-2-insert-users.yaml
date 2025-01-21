@@ -3,14 +3,12 @@ databaseChangeLog:
       id: "2-insert-users"
       author: "Marat Bulekbayev"
       preConditions:
-        - not:
-            sqlCheck:
-              sql: "SELECT COUNT(*) FROM users WHERE email = 'john.doe@example.com'"
-              expectedResult: "0"
-        - not:
-            sqlCheck:
-              sql: "SELECT COUNT(*) FROM users WHERE email = 'joanna.doe@example.com'"
-              expectedResult: "0"
+        - sqlCheck:
+            sql: "SELECT COUNT(*) FROM users WHERE email = 'john.doe@example.com'"
+            expectedResult: "0"
+        - sqlCheck:
+            sql: "SELECT COUNT(*) FROM users WHERE email = 'joanna.doe@example.com'"
+            expectedResult: "0"
       changes:
         - insert:
             tableName: users
@@ -26,7 +24,7 @@ databaseChangeLog:
                   value: john.doe@example.com
               - column:
                   name: password
-                  value: "$2a$10$7wDlpmXPZHht0erO47lrm.qN9HkBOoH/ODUwEZ3qV3W5W3uNbeqFS"
+                  value: "$2a$12$D6Ur0MJT0klFuclfl35s5eUo/krWuR2eQ3qhKnyy92PPbyXzTvguy"
               - column:
                   name: role
                   value: ADMIN
@@ -44,7 +42,7 @@ databaseChangeLog:
                   value: joanna.doe@example.com
               - column:
                   name: password
-                  value: "$2a$10$7wDlpmXPZHht0erO47lrm.qN9HkBOoH/ODUwEZ3qV3W5W3uNbeqFS"
+                  value: "$2a$12$D6Ur0MJT0klFuclfl35s5eUo/krWuR2eQ3qhKnyy92PPbyXzTvguy"
               - column:
                   name: role
                   value: USER

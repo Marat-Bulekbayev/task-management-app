@@ -5,7 +5,7 @@ databaseChangeLog:
       preConditions:
         - not:
             - tableExists:
-                tableName: account
+                tableName: users
       changes:
         - createTable:
             tableName: users

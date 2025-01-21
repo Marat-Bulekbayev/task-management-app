@@ -40,8 +40,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
-                        .requestMatchers("/api/v1/hello-world-admin").hasRole(UserRole.ADMIN.name())
-                        .requestMatchers("/api/v1/hello-world-user").hasRole(UserRole.USER.name())
+                        .requestMatchers("/api/v1/tasks/**").hasAnyRole(UserRole.ADMIN.name(), UserRole.USER.name())
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(authenticationErrorHandler))

@@ -34,8 +34,7 @@ public class AuthenticationErrorHandler implements AccessDeniedHandler {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         objectMapper.registerModule(javaTimeModule);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

@@ -57,10 +57,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authenticationToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
-                        log.warn(authenticationToken.toString());
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-                        log.warn("Authentication set in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
-
                     }
                 }
             }
@@ -85,8 +82,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         ObjectMapper objectMapper = new ObjectMapper();
         JavaTimeModule javaTimeModule = new JavaTimeModule();
-        javaTimeModule.addSerializer(LocalDateTime.class,
-                new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         objectMapper.registerModule(javaTimeModule);
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

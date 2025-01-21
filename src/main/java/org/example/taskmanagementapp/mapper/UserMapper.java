@@ -10,7 +10,7 @@ import org.mapstruct.Mapping;
 public interface UserMapper {
 
     @Mapping(target = "role", ignore = true)
-    User toUser(RegistrationRequest request);
+    User toUserEntity(RegistrationRequest request);
 
     RegistrationResponse toRegistrationResponse(User user);
 }

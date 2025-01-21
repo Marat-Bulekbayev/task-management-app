@@ -52,7 +52,7 @@ public class AuthServiceImpl implements AuthService {
             throw new UserRegistrationException(String.format("User with email: %s already exists", request.getEmail()));
         }
 
-        User newUser = userMapper.toUser(request);
+        User newUser = userMapper.toUserEntity(request);
         newUser.setPassword(passwordEncoder.encode(request.getPassword()));
         newUser.setRole(UserRole.USER);
 
