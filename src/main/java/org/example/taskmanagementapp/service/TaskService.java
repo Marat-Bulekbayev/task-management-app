@@ -16,7 +16,7 @@ public interface TaskService {
 
     TaskDto findTaskById(Long id, String email);
 
-    UpdateTaskResponse updateTask(UpdateTaskRequest request);
+    UpdateTaskResponse updateTask(Long taskId, UpdateTaskRequest request, String email);
 
-    void deleteTaskById(Long id, String username);
+    void deleteTaskById(Long id, String email);
 }

@@ -3,6 +3,7 @@ package org.example.taskmanagementapp.service.impl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementapp.exception.TaskNotFoundException;
+import org.example.taskmanagementapp.exception.UserNotFoundException;
 import org.example.taskmanagementapp.mapper.TaskMapper;
 import org.example.taskmanagementapp.model.dto.TaskDto;
 import org.example.taskmanagementapp.model.entity.Task;
@@ -39,6 +40,13 @@ public class TaskServiceImpl implements TaskService {
         Task task = taskMapper.toTaskEntity(request);
         task.setStatus(TaskStatus.TO_DO);
         task.setAuthor(user);
+
+        if (request.getAssigneeId() != null) {
+            User assigneeUser = userRepository.findById(request.getAssigneeId())
+                    .orElseThrow(() -> new UserNotFoundException(String.format("User with id: %d not found", request.getAssigneeId())));
+            task.setAssignee(assigneeUser);
+        }
+
         Task savedTask = taskRepository.save(task);
 
         log.info("Create new task with id: {} by user: {}", savedTask.getId(), user.getEmail());
@@ -72,8 +80,19 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public UpdateTaskResponse updateTask(UpdateTaskRequest request) {
-        return null;
+    public UpdateTaskResponse updateTask(Long taskId, UpdateTaskRequest request, String email) {
+        User user = userRepository.findByEmail(email).orElseThrow();
+
+        Task taskForUpdate;
+
+        if (user.getRole().equals(UserRole.ADMIN)) {
+            taskForUpdate = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(String.format("Task with id: %d not found", taskId)));
+        } else {
+            taskForUpdate = taskRepository.findByIdAndAssigneeId(taskId, user.getId())
+                    .orElseThrow(() -> new TaskNotFoundException(String.format("Task with id: %d not found for user %s", taskId, user.getEmail())));
+        }
+
+        return taskMapper.toUpdateTaskResponse(updateTask(taskForUpdate, request));
     }
 
     @Transactional
@@ -87,5 +106,22 @@ public class TaskServiceImpl implements TaskService {
         } else {
             throw new AccessDeniedException("You don't have permission for this action");
         }
+    }
+
+    private Task updateTask(Task taskForUpdate, UpdateTaskRequest request) {
+        if (request.getTitle() != null && !request.getTitle().equals(taskForUpdate.getTitle())) {
+            taskForUpdate.setTitle(request.getTitle());
+        }
+        if (request.getDescription() != null && !request.getDescription().equals(taskForUpdate.getDescription())) {
+            taskForUpdate.setDescription(request.getDescription());
+        }
+        if (request.getStatus() != null && !request.getStatus().equals(taskForUpdate.getStatus())) {
+            taskForUpdate.setStatus(request.getStatus());
+        }
+        if (request.getPriority() != null && !request.getPriority().equals(taskForUpdate.getPriority())) {
+            taskForUpdate.setPriority(request.getPriority());
+        }
+
+        return taskRepository.save(taskForUpdate);
     }
 }

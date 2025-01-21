@@ -4,6 +4,7 @@ import org.example.taskmanagementapp.model.dto.TaskDto;
 import org.example.taskmanagementapp.model.entity.Task;
 import org.example.taskmanagementapp.model.request.CreateTaskRequest;
 import org.example.taskmanagementapp.model.response.CreateTaskResponse;
+import org.example.taskmanagementapp.model.response.UpdateTaskResponse;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
@@ -14,4 +15,6 @@ public interface TaskMapper {
     CreateTaskResponse toCreateTaskResponse(Task task);
 
     TaskDto toTaskDto(Task task);
+
+    UpdateTaskResponse toUpdateTaskResponse(Task task);
 }

@@ -19,4 +19,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
     @EntityGraph(attributePaths = "author")
     Optional<Task> findByIdAndAuthorId(Long id, Long authorId);
+
+    @EntityGraph(attributePaths = "author")
+    Optional<Task> findByIdAndAssigneeId(Long id, Long assigneeId);
 }

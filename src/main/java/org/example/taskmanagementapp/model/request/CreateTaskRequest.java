@@ -8,7 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-import org.example.taskmanagementapp.model.entity.User;
 import org.example.taskmanagementapp.model.enums.TaskPriority;
 
 @NoArgsConstructor
@@ -28,5 +27,5 @@ public class CreateTaskRequest {
     @NotNull(message = "Task priority cannot be null")
     private TaskPriority priority;
 
-    private User assignee;
+    private Long assigneeId;
 }
