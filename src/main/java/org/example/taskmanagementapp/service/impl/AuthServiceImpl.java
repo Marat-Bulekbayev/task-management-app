@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    private static final String GRANTED_AUTHORITY_PREFIX = "ROLE_";
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
@@ -32,7 +34,7 @@ public class AuthServiceImpl implements AuthService {
                 () -> new UserNotFoundException(String.format("User with email: %s not found", request.getEmail())));
 
         if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            String token = JwtTokenUtil.generateToken(user.getEmail(), user.getRole().name());
+            String token = JwtTokenUtil.generateToken(user.getEmail(), GRANTED_AUTHORITY_PREFIX + user.getRole().name());
             return AuthenticationResponse.builder()
                     .accessToken(token)
                     .issuedAt(JwtTokenUtil.getIssuedAtFromToken(token))

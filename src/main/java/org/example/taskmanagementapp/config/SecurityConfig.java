@@ -1,6 +1,8 @@
 package org.example.taskmanagementapp.config;
 
 import lombok.RequiredArgsConstructor;
+import org.example.taskmanagementapp.exception.AuthenticationErrorHandler;
+import org.example.taskmanagementapp.model.enums.UserRole;
 import org.example.taskmanagementapp.security.CustomUserDetailsService;
 import org.example.taskmanagementapp.security.filter.JwtAuthenticationFilter;
 import org.springframework.context.annotation.Bean;
@@ -20,6 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final CustomUserDetailsService customUserDetailsService;
+    private final AuthenticationErrorHandler authenticationErrorHandler;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -37,8 +40,11 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll()
+                        .requestMatchers("/api/v1/hello-world-admin").hasRole(UserRole.ADMIN.name())
+                        .requestMatchers("/api/v1/hello-world-user").hasRole(UserRole.USER.name())
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(exceptions -> exceptions.accessDeniedHandler(authenticationErrorHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(new JwtAuthenticationFilter(customUserDetailsService), UsernamePasswordAuthenticationFilter.class)
                 .formLogin(AbstractHttpConfigurer::disable)

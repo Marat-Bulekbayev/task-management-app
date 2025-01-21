@@ -8,8 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/v1")
 public class HelloWorldController {
 
-    @GetMapping("/hello-world")
-    public String get() {
-        return "hello world";
+    @GetMapping("/hello-world-admin")
+    public String getAdmin() {
+        return "hello world - admin";
+    }
+
+    @GetMapping("/hello-world-user")
+    public String getUser() {
+        return "hello world - user";
     }
 }

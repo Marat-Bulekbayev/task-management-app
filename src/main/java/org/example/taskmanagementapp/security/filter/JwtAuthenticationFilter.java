@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.taskmanagementapp.exception.JwtTokenException;
 import org.example.taskmanagementapp.model.response.ErrorResponse;
 import org.example.taskmanagementapp.util.JwtTokenUtil;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -56,7 +57,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                         UsernamePasswordAuthenticationToken authenticationToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
+                        log.warn(authenticationToken.toString());
                         SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                        log.warn("Authentication set in SecurityContext: {}", SecurityContextHolder.getContext().getAuthentication());
+
                     }
                 }
             }
@@ -69,12 +73,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private void handleJwtException(HttpServletResponse response, JwtTokenException ex) throws IOException {
-        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setStatus(HttpStatus.BAD_REQUEST.value());
         response.setContentType(CONTENT_TYPE);
 
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .timestamp(LocalDateTime.now())
-                .status(HttpServletResponse.SC_UNAUTHORIZED)
+                .status(HttpStatus.BAD_REQUEST.value())
                 .error(ex.getClass().getSimpleName())
                 .message(ex.getMessage())
                 .build();
