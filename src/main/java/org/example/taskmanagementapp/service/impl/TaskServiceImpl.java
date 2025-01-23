@@ -20,11 +20,13 @@ import org.example.taskmanagementapp.repository.TaskRepository;
 import org.example.taskmanagementapp.repository.UserRepository;
 import org.example.taskmanagementapp.service.CommentService;
 import org.example.taskmanagementapp.service.TaskService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -57,13 +59,16 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public List<TaskDto> findAllTasks(String email) {
+    public Page<TaskDto> findAllTasks(String email, int page, int size, String sortBy, boolean ascending) {
         User currentUser = userRepository.findByEmail(email).orElseThrow();
+        Sort.Direction direction = ascending ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Sort sort = Sort.by(direction, sortBy);
+        Pageable pageable = PageRequest.of(page, size, sort);
 
         if (isCurrentUserHasAdminRole(currentUser)) {
-            return taskRepository.findAll().stream().map(taskMapper::toTaskDto).toList();
+            return taskRepository.findAll(pageable).map(taskMapper::toTaskDto);
         } else {
-            return taskRepository.findAllByAuthorId(currentUser.getId()).stream().map(taskMapper::toTaskDto).toList();
+            return taskRepository.findAllByAuthorId(currentUser.getId(), pageable).map(taskMapper::toTaskDto);
         }
     }
 

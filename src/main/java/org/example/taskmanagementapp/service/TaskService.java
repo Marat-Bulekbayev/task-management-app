@@ -8,14 +8,13 @@ import org.example.taskmanagementapp.model.request.CreateTaskRequest;
 import org.example.taskmanagementapp.model.request.UpdateTaskRequest;
 import org.example.taskmanagementapp.model.response.CreateTaskResponse;
 import org.example.taskmanagementapp.model.response.UpdateTaskResponse;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
 
 public interface TaskService {
 
     CreateTaskResponse createTask(CreateTaskRequest request, String email);
 
-    List<TaskDto> findAllTasks(String email);
+    Page<TaskDto> findAllTasks(String email, int page, int size, String sortBy, boolean ascending);
 
     TaskDto findTaskById(Long taskId, String email);
 
