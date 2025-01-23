@@ -11,15 +11,15 @@ import java.util.Optional;
 @Repository
 public interface TaskRepository extends JpaRepository<Task, Long> {
 
-    @EntityGraph(attributePaths = "author")
+    @EntityGraph(attributePaths = {"author", "assignee", "comments", "comments.author"})
     List<Task> findAll();
 
-    @EntityGraph(attributePaths = "author")
+    @EntityGraph(attributePaths = {"author", "assignee", "comments", "comments.author"})
     List<Task> findAllByAuthorId(Long authorId);
 
-    @EntityGraph(attributePaths = "author")
+    @EntityGraph(attributePaths = {"author", "assignee", "comments", "comments.author"})
     Optional<Task> findByIdAndAuthorId(Long id, Long authorId);
 
-    @EntityGraph(attributePaths = "author")
+    @EntityGraph(attributePaths = {"author", "assignee", "comments", "comments.author"})
     Optional<Task> findByIdAndAssigneeId(Long id, Long assigneeId);
 }
