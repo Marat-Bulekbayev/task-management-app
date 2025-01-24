@@ -38,10 +38,10 @@ server:
 
 ### ⚙️ Step 1: Setup the Database
 
-#### 🐳 Using Docker
-Run PostgreSQL in a Docker container:
+#### 🐳 Using Docker Compose
+Navigate to the `build/docker-compose.yaml` file, then run the following command:
 ```bash
-docker run --name task-management-db -e POSTGRES_DB=task-management-db -e POSTGRES_USER=admin -e POSTGRES_PASSWORD=admin -p 5432:5432 -d postgres
+docker compose up -d
 ```
 ### ⚙️ Step 2: Build an application
 Compile the application using Maven:
