@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.LocalDateTime;
@@ -15,30 +16,35 @@ import java.time.LocalDateTime;
 @Slf4j
 public class ControllerAdvisor {
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(TaskNotFoundException.class)
-    private ResponseEntity<ErrorResponse> handleUserNotFoundException(TaskNotFoundException ex) {
+    private ResponseEntity<ErrorResponse> handleTaskNotFoundException(TaskNotFoundException ex) {
         log.warn(ex.getMessage());
-        return createErrorResponse(HttpStatus.BAD_REQUEST, ex, ex.getMessage());
+        return createErrorResponse(HttpStatus.NOT_FOUND, ex, ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(UserNotFoundException.class)
     private ResponseEntity<ErrorResponse> handleUserNotFoundException(UserNotFoundException ex) {
         log.warn(ex.getMessage());
         return createErrorResponse(HttpStatus.NOT_FOUND, ex, ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IncorrectPasswordValidationException.class)
-    private ResponseEntity<ErrorResponse> handleUserNotFoundException(IncorrectPasswordValidationException ex) {
+    private ResponseEntity<ErrorResponse> handleIncorrectPasswordValidationException(IncorrectPasswordValidationException ex) {
         log.warn(ex.getMessage());
         return createErrorResponse(HttpStatus.BAD_REQUEST, ex, ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(UserRegistrationException.class)
     private ResponseEntity<ErrorResponse> handleUserRegistrationException(UserRegistrationException ex) {
         log.warn(ex.getMessage());
         return createErrorResponse(HttpStatus.BAD_REQUEST, ex, ex.getMessage());
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(MethodArgumentNotValidException ex) {
         BindingResult result = ex.getBindingResult();
@@ -55,6 +61,7 @@ public class ControllerAdvisor {
         return createErrorResponse(HttpStatus.BAD_REQUEST, ex, message.toString().trim());
     }
 
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(JwtTokenException.class)
     public ResponseEntity<ErrorResponse> handleJwtTokenException(JwtTokenException ex) {
         log.warn("JWT Token Exception: {}", ex.getMessage());

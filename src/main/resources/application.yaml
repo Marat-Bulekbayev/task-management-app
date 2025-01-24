@@ -1,12 +1,12 @@
 spring:
   application:
-    name: task-management-app
+    name: ${APP_NAME:task-management-app}
   datasource:
-    url: jdbc:postgresql://localhost:5432/task-management-db
-    username: admin
-    password: admin
+    url: jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:task-management-db}
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:admin}
   liquibase:
-    enabled: true
+    enabled: ${LIQUIBASE_ENABLED:true}
 
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}

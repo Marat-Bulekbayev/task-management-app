@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: "4-init-data"
+      author: "Marat Bulekbayev"
+      changes:
+        - sqlFile:
+            path: ../scripts/init.sql
+            relativeToChangelogFile: true
+            splitStatements: true
+            stripComments: true
